@@ -1066,10 +1066,8 @@
     <script>
         // --- SHAKE TO CALL FEATURE (Added as requested) ---
         let lastShakeTime = 0;
-        // Sensitivity Threshold:
-        // ~9.8 is gravity. 25 means a strong shake (~2.5G). 
-        // Prevents small movements from triggering the call.
-        const shakeThreshold = 25; 
+        // Updated Threshold: Lowered to 15 (was 25) to make it easier to trigger
+        const shakeThreshold = 15; 
 
         window.addEventListener('devicemotion', (event) => {
             const acc = event.accelerationIncludingGravity;
@@ -1108,20 +1106,19 @@
             text.innerText = "پەیوەندی دەکرێت...";
             toast.classList.add('show');
             
-            // 3. Initiate Call after small delay (1.5s)
+            // 3. Initiate Call IMMEDIATELY (No delay)
+            // Using window.location.href or assign immediately helps bypass some browser blocks
+            window.location.href = "tel:07507597461";
+
+            // Reset Toast after call initiates
             setTimeout(() => {
-                window.location.href = "tel:07507597461";
-                
-                // Reset Toast after call initiates
+                toast.classList.remove('show');
+                // Restore original toast state (for copy link)
                 setTimeout(() => {
-                    toast.classList.remove('show');
-                    // Restore original toast state (for copy link)
-                    setTimeout(() => {
-                         icon.className = originalIconClass;
-                         text.innerText = originalText;
-                    }, 500);
-                }, 1000);
-            }, 1500);
+                        icon.className = originalIconClass;
+                        text.innerText = originalText;
+                }, 500);
+            }, 3000);
         }
 
         // --- SERVICE WORKER REGISTRATION (PWA) ---
