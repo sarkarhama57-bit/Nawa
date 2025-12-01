@@ -1064,6 +1064,66 @@
     </div>
 
     <script>
+        // --- SHAKE TO CALL FEATURE (Added as requested) ---
+        let lastShakeTime = 0;
+        // Sensitivity Threshold:
+        // ~9.8 is gravity. 25 means a strong shake (~2.5G). 
+        // Prevents small movements from triggering the call.
+        const shakeThreshold = 25; 
+
+        window.addEventListener('devicemotion', (event) => {
+            const acc = event.accelerationIncludingGravity;
+            if(!acc) return;
+
+            // Calculate magnitude of acceleration vector
+            const totalAcc = Math.sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
+            
+            // Remove gravity effect (approx 9.8) to get net movement force
+            const netAcc = Math.abs(totalAcc - 9.8);
+
+            if (netAcc > shakeThreshold) {
+                const now = Date.now();
+                // 3 Second cooldown to prevent multiple triggers
+                if (now - lastShakeTime > 3000) {
+                    lastShakeTime = now;
+                    triggerShakeAction();
+                }
+            }
+        });
+
+        function triggerShakeAction() {
+            // 1. Haptic Feedback (Vibrate)
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+            // 2. Visual Feedback (Reuse Toast)
+            const toast = document.getElementById('customToast');
+            const icon = toast.querySelector('i');
+            const text = toast.querySelector('span');
+            
+            // Temporary change toast content
+            const originalIconClass = icon.className;
+            const originalText = text.innerText;
+
+            icon.className = "fas fa-phone-volume";
+            text.innerText = "پەیوەندی دەکرێت...";
+            toast.classList.add('show');
+            
+            // 3. Initiate Call after small delay (1.5s)
+            setTimeout(() => {
+                window.location.href = "tel:07507597461";
+                
+                // Reset Toast after call initiates
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    // Restore original toast state (for copy link)
+                    setTimeout(() => {
+                         icon.className = originalIconClass;
+                         text.innerText = originalText;
+                    }, 500);
+                }, 1000);
+            }, 1500);
+        }
+
         // --- SERVICE WORKER REGISTRATION (PWA) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1327,6 +1387,12 @@
                 try {
                     // گۆڕانکاری: لابردنی کۆدی نیشاندانی Toast لێرە
                     document.execCommand('copy');
+                    
+                    // Show standard copy toast
+                    const toast = document.getElementById('customToast');
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 3000);
+
                 } catch (err) { console.error('Copy failed', err); }
                 document.body.removeChild(textArea);
             }
