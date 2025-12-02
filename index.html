@@ -21,7 +21,6 @@
             --glass: rgba(255, 255, 255, 0.08);
             --border: rgba(255, 255, 255, 0.1);
             
-            /* --- گۆڕانکاری ڕەنگەکان لێرە کراوە --- */
             --blue: #0000FE;   /* شینی نوێ */
             --yellow: #FEFF00; /* زەردی نوێ */
             
@@ -33,11 +32,7 @@
             margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Noto Kufi Arabic', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            /* Security: No Select */
-            user-select: none;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
 
         body {
@@ -46,76 +41,91 @@
             min-height: 100vh;
             display: flex; justify-content: center;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 0, 254, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(254, 255, 0, 0.1) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(0, 0, 254, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(254, 255, 0, 0.05) 0%, transparent 40%);
             overflow-x: hidden;
+            cursor: pointer; 
+        }
+
+        /* --- SPEED OPTIMIZATION: SMALLER RIPPLE --- */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            pointer-events: none;
+            /* کاتەکەم کەمکردەوە و قەبارەکەم بچوک کردەوە بۆ خێرایی */
+            animation: rippleAnim 0.4s ease-out; 
+            z-index: 9999;
+            opacity: 0.6;
+            will-change: transform, opacity; /* یارمەتی GPU دەدات */
+        }
+        
+        .ripple-blue { 
+            background: var(--blue);
+            box-shadow: 0 0 5px var(--blue); /* سێبەرەکەم کەمکردەوە */
+        }
+        .ripple-yellow { 
+            background: var(--yellow);
+            box-shadow: 0 0 5px var(--yellow);
+        }
+
+        @keyframes rippleAnim {
+            0% { transform: scale(0); opacity: 0.6; }
+            100% { transform: scale(4); opacity: 0; } /* لێرە کردم بە 4 لەجیاتی 40 */
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
+
+        .orb {
+            position: absolute; bottom: -100px;
+            background: transparent; border-radius: 50%;
+            opacity: 0; animation: riseUp 15s infinite ease-in;
+            box-shadow: 0 0 20px var(--blue);
+        }
+
+        .orb:nth-child(1) { left: 10%; width: 20px; height: 20px; background: var(--blue); animation-duration: 12s; animation-delay: 0s; }
+        .orb:nth-child(2) { left: 30%; width: 40px; height: 40px; border: 2px solid var(--yellow); box-shadow: 0 0 15px var(--yellow); animation-duration: 18s; animation-delay: 2s; }
+        .orb:nth-child(3) { left: 70%; width: 15px; height: 15px; background: var(--yellow); animation-duration: 10s; animation-delay: 4s; }
+        .orb:nth-child(4) { left: 50%; width: 30px; height: 30px; border: 2px solid var(--blue); animation-duration: 20s; animation-delay: 6s; }
+        .orb:nth-child(5) { left: 85%; width: 25px; height: 25px; background: rgba(0,0,254,0.5); animation-duration: 14s; animation-delay: 1s; }
+        .orb:nth-child(6) { left: 20%; width: 10px; height: 10px; background: #fff; box-shadow: 0 0 10px #fff; animation-duration: 25s; animation-delay: 8s; }
+
+        @keyframes riseUp {
+            0% { bottom: -100px; transform: translateX(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.6; }
+            50% { opacity: 0.4; }
+            100% { bottom: 110%; transform: translateX(50px) scale(1.2); opacity: 0; }
         }
 
         .app-container {
-            width: 100%;
-            max-width: 480px;
-            background: rgba(0,0,0,0.2);
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 90px;
+            width: 100%; max-width: 480px; background: rgba(0,0,0,0.2);
+            min-height: 100vh; position: relative; padding-bottom: 90px;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
-        /* --- LOGO STYLE (MAIN HEADER) --- */
+        /* --- LOGO STYLE --- */
         .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Montserrat', sans-serif; 
-            direction: ltr; 
-            justify-content: center;
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'Montserrat', sans-serif; direction: ltr; justify-content: center;
         }
 
         .letter-a {
-            font-size: 2.8rem;
-            font-weight: 900;
-            line-height: 1;
-            /* 80% Blue, 20% Yellow */
+            font-size: 2.8rem; font-weight: 900; line-height: 1;
             background: linear-gradient(90deg, var(--blue) 80%, var(--yellow) 80%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
-            position: relative;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5)); position: relative;
         }
 
         .word-center {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--yellow);
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-size: 1.8rem; font-weight: 800; color: var(--yellow);
+            letter-spacing: 0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* --- HEADER ANIMATION --- */
-        .header .logo-container .letter-a {
-            animation: headerAPulse 1.5s ease-in-out infinite alternate;
-        }
-
-        .header .logo-container .word-center {
-            background: linear-gradient(90deg, var(--yellow) 0%, #ffffff 50%, var(--yellow) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: headerTextShimmer 3s linear infinite;
-            text-shadow: none; 
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
-        }
-
-        @keyframes headerAPulse {
-            0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px var(--blue)); }
-            100% { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 15px var(--blue)) drop-shadow(0 0 5px #fff); }
-        }
-
-        @keyframes headerTextShimmer { to { background-position: 200% center; } }
-
-        /* =========================================
-            --- CINEMATIC PRELOADER ---
-            ========================================= */
+        /* --- PRELOADER --- */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 99999;
@@ -123,65 +133,34 @@
             transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
         
-        #preloader.hide-preloader {
-            transform: translateY(-100%);
-        }
+        #preloader.hide-preloader { transform: translateY(-100%); }
 
-        .reveal-container {
-            overflow: hidden;
-            margin-bottom: 5px;
-            text-align: center;
-        }
+        .reveal-container { overflow: hidden; margin-bottom: 5px; text-align: center; }
 
         .welcome-text {
-            color: #fff; 
-            font-size: 1.2rem; 
-            font-weight: 400; 
-            letter-spacing: 1px;
-            transform: translateY(100%);
-            animation: textReveal 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 0.3s;
+            color: #fff; font-size: 1.2rem; font-weight: 400; letter-spacing: 1px;
+            transform: translateY(100%); animation: textReveal 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 0.3s;
         }
 
-        .loader-logo-wrapper {
-            margin-bottom: 20px;
-            transform: scale(1.5);
-        }
+        .loader-logo-wrapper { margin-bottom: 20px; transform: scale(1.5); }
         
-        /* Animation for Logo Text inside Preloader */
         .loader-logo-wrapper .letter-a, 
         .loader-logo-wrapper .word-center {
-            display: inline-block;
-            transform: translateY(100%);
-            opacity: 0;
+            display: inline-block; transform: translateY(100%); opacity: 0;
             animation: logoReveal 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 0.8s;
         }
 
-        @keyframes textReveal {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        @keyframes textReveal { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes logoReveal { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        @keyframes logoReveal {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* --- THE LOADING LINE --- */
         .loading-bar {
-            width: 180px; 
-            height: 4px; 
-            background: #222; 
-            margin-top: 15px; 
-            border-radius: 4px; 
-            overflow: hidden;
-            position: relative;
-            opacity: 0; 
+            width: 180px; height: 4px; background: #222; margin-top: 15px;
+            border-radius: 4px; overflow: hidden; position: relative; opacity: 0;
             animation: fadeInBar 0.5s ease forwards 1.2s;
         }
         
         .loading-progress {
-            width: 0%; 
-            height: 100%; 
+            width: 0%; height: 100%;
             background: linear-gradient(90deg, var(--blue), var(--yellow));
             animation: loadProgress 2.2s ease-in-out forwards 1.2s;
             box-shadow: 0 0 10px var(--blue);
@@ -189,7 +168,6 @@
 
         @keyframes fadeInBar { to { opacity: 1; } }
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
-
 
         /* --- Header & Status --- */
         .header {
@@ -211,228 +189,152 @@
         .status-closed { background: #ff0000; box-shadow: 0 0 8px #ff0000; }
 
         /* --- Hero Section --- */
-        .hero {
-            padding: 40px 20px; text-align: center; position: relative; overflow: hidden;
-        }
+        .hero { padding: 40px 20px 20px 20px; text-align: center; position: relative; overflow: hidden; }
         
         .greeting-msg {
-            font-size: 1.1rem;
-            color: var(--yellow);
-            font-weight: 700;
-            margin-bottom: 10px;
-            margin-top: 15px;
+            font-size: 1.1rem; color: var(--yellow); font-weight: 700;
+            margin-bottom: 10px; margin-top: 15px;
             text-shadow: 0 0 10px rgba(254, 255, 0, 0.3);
             animation: fadeInUp 1s ease forwards;
         }
 
-        /* --- LOGO NAME STYLES (LTR) --- */
         .logo-name-text {
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            opacity: 0;
-            transform: translateY(15px);
+            height: 40px; display: flex; justify-content: center; align-items: center;
+            font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;
+            opacity: 0; transform: translateY(15px);
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 10;
-            direction: ltr; 
+            z-index: 10; direction: ltr; 
         }
-
-        .logo-name-text.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Color Classes */
+        .logo-name-text.show { opacity: 1; transform: translateY(0); }
         .t-blue { color: var(--blue); text-shadow: 0 0 15px rgba(0, 0, 254, 0.8); }
         .t-yellow { color: var(--yellow); text-shadow: 0 0 15px rgba(254, 255, 0, 0.8); }
 
-        /* --- LOGO SLIDESHOW & ANIMATED GLOW (UPDATED) --- */
+        /* --- LOGO, CIRCUIT & GLOW --- */
         .hero-circle-logo {
-            width: 145px;
-            height: 145px;
-            margin: 0 auto 15px auto;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 20;
-            background: #000;
+            width: 145px; height: 145px; margin: 0 auto 15px auto;
+            position: relative; display: flex; justify-content: center; align-items: center;
+            z-index: 20; background: #000; border-radius: 50%; cursor: pointer;
+        }
+
+        /* Glow Effect */
+        .hero-circle-logo::before, .hero-circle-logo::after {
+            content: ''; position: absolute; left: -4px; top: -4px; right: -4px; bottom: -4px;
             border-radius: 50%;
-            cursor: pointer;
+            background: conic-gradient(var(--blue), var(--yellow), var(--blue), var(--yellow));
+            z-index: -1; animation: spinGlow 2.5s linear infinite;
         }
+        .hero-circle-logo::after { filter: blur(15px); opacity: 0.7; }
+        .hero-circle-logo:active { transform: scale(0.95); }
 
-        /* Spinning Border/Glow Behind */
-        .hero-circle-logo::before, 
-        .hero-circle-logo::after {
-            content: '';
-            position: absolute;
-            left: -4px; top: -4px; right: -4px; bottom: -4px;
-            border-radius: 50%;
-            background: conic-gradient(
-                var(--blue), 
-                var(--yellow), 
-                var(--blue), 
-                var(--yellow)
-            );
-            z-index: -1;
-            animation: spinGlow 2.5s linear infinite;
-        }
-
-        /* Blur Effect for Glow */
-        .hero-circle-logo::after {
-            filter: blur(15px);
-            opacity: 0.7;
-        }
-
-        .hero-circle-logo:active {
-            transform: scale(0.95);
+        /* Digital Circuit Canvas (Behind Image) */
+        .circuit-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%; 
+            z-index: 1; /* پاش وێنە (z-index: 2) و پێش بازنەکانی دیکە (z-index: 1) */
+            opacity: 0.9; /* Opacity بەرزکراوەتەوە بۆ دیاربوون */
         }
 
         .logo-slide-img {
-            width: 100%; height: 100%; 
-            object-fit: cover; 
-            position: absolute; top: 0; left: 0; 
-            border-radius: 50%;
-            opacity: 0; 
-            transition: opacity 1s ease-in-out;
-            z-index: 2; /* In front of the glow */
+            width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; 
+            border-radius: 50%; opacity: 0; transition: opacity 1s ease-in-out;
+            z-index: 2; /* In front of canvas */
         }
         .logo-slide-img.active { opacity: 1; }
         
-        @keyframes spinGlow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes spinGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- TECH RINGS --- */
+        .tech-ring-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 220px; height: 220px; z-index: 1; pointer-events: none;
+        }
+        .tech-ring-1 {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 2px dashed rgba(0, 0, 254, 0.4); border-radius: 50%;
+            animation: spinRight 20s linear infinite;
+        }
+        .tech-ring-2 {
+            position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border-radius: 50%; border-top: 3px solid var(--yellow); border-right: 3px solid transparent;
+            border-bottom: 3px solid var(--blue); border-left: 3px solid transparent;
+            animation: spinLeft 5s linear infinite; box-shadow: 0 0 15px rgba(0, 0, 254, 0.2);
+        }
+        .tech-ring-3 {
+            position: absolute; top: 35px; left: 35px; right: 35px; bottom: 35px;
+            border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); animation: spinRight 8s linear infinite;
+        }
+        .tech-ring-3::before {
+            content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px;
+            background: var(--yellow); border-radius: 50%; box-shadow: 0 0 10px var(--yellow);
         }
 
-        /* --- MUSIC PLAYING ANIMATION FOR LOGO (Beat Effect) --- */
-        .logo-music-active {
-            animation: musicPulseEffect 0.5s infinite alternate !important;
-        }
-        /* When music is active, we pulse the whole container including glow */
-        .logo-music-active::before,
-        .logo-music-active::after {
-             animation: spinGlow 0.5s linear infinite !important; /* Spin faster on music */
-        }
+        @keyframes spinRight { 100% { transform: translate(0,0) rotate(360deg); } }
+        @keyframes spinLeft { 100% { transform: translate(0,0) rotate(-360deg); } }
 
-        @keyframes musicPulseEffect {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
-        }
+        .logo-music-active { animation: musicPulseEffect 0.5s infinite alternate !important; }
+        .logo-music-active::before, .logo-music-active::after { animation: spinGlow 0.5s linear infinite !important; }
+        .logo-music-active .tech-ring-2 { border-width: 5px; filter: drop-shadow(0 0 10px var(--yellow)); animation-duration: 1s; }
+        @keyframes musicPulseEffect { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
 
-        .hero-title {
-            font-size: 1.4rem; margin-bottom: 10px; line-height: 1.6;
-        }
-        
-        .hero-logo-wrapper {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            direction: ltr; margin: 5px 0;
-        }
+        .hero-title { font-size: 1.4rem; margin-bottom: 10px; line-height: 1.6; }
+        .hero-logo-wrapper { display: flex; justify-content: center; align-items: center; gap: 8px; direction: ltr; margin: 5px 0; }
         .hero .letter-a { font-size: 3.5rem; } 
         .hero .word-center { font-size: 2.2rem; } 
 
-        /* --- UPDATED TICKER TAPE (شریتی جوڵاو) --- */
-        .ticker-wrap {
-            width: 100%; 
-            overflow: hidden; 
-            background: linear-gradient(90deg, rgba(0, 0, 254, 0.2), rgba(254, 255, 0, 0.1));
-            padding: 10px 0; 
-            margin-bottom: 20px; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+        /* --- STATS COUNTER --- */
+        .stats-container {
+            display: flex; justify-content: space-around; align-items: center;
+            margin: 20px 0 30px 0; padding: 15px 10px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
             backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            /* Min-height for stacked logo */
-            min-height: 60px;
-            display: flex;
-            align-items: center;
+        }
+        .stat-box { text-align: center; position: relative; width: 33%; }
+        .stat-box:not(:last-child)::after {
+            content: ''; position: absolute; left: 0; top: 10%; height: 80%; width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--border), transparent);
+        }
+        .stat-num {
+            font-family: 'Montserrat', sans-serif; font-size: 1.3rem; font-weight: 900;
+            color: #fff; text-shadow: 0 0 10px rgba(0,0,254,0.5); display: block;
+        }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; font-weight: bold; }
+        .stat-plus { color: var(--yellow); }
+
+        /* --- TICKER TAPE --- */
+        .ticker-wrap {
+            width: 100%; overflow: hidden; background: linear-gradient(90deg, rgba(0, 0, 254, 0.2), rgba(254, 255, 0, 0.1));
+            padding: 10px 0; margin-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); min-height: 60px; display: flex; align-items: center;
         }
         
         .ticker { 
-            display: inline-block; 
-            white-space: nowrap; 
-            animation: ticker 40s linear infinite; 
-            animation-play-state: paused;
-            opacity: 0; /* سەرەتا نادیارە */
-            transition: opacity 1s ease; /* بە هێواشی دەردەکەوێت */
+            display: inline-block; white-space: nowrap; animation: ticker 40s linear infinite; 
+            animation-play-state: paused; opacity: 0; transition: opacity 1s ease; 
         }
+        .ticker.show-ticker { opacity: 1; }
+        .ticker-item { display: inline-flex; align-items: center; padding: 0 25px; font-size: 0.95rem; color: #fff; gap: 8px; }
         
-        .ticker.show-ticker {
-            opacity: 1;
-        }
-        
-        .ticker-item { 
-            display: inline-flex; 
-            align-items: center; 
-            padding: 0 25px; 
-            font-size: 0.95rem; 
-            color: #fff;
-            gap: 8px;
-        }
-        
-        /* --- NEW STYLE FOR TICKER LOGO (STACKED) --- */
         .ticker-logo {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            display: inline-flex;
-            flex-direction: column; /* ژێر یەک */
-            align-items: center;    /* ناوەڕاست */
-            justify-content: center;
-            margin: 0 10px;
-            direction: ltr;
-            line-height: 1; /* بۆ ئەوەی زۆر لێک دوور نەکەونەوە */
-            vertical-align: middle;
+            font-family: 'Montserrat', sans-serif; font-weight: 900; display: inline-flex; flex-direction: column;
+            align-items: center; justify-content: center; margin: 0 10px; direction: ltr; line-height: 1; vertical-align: middle;
         }
-
         .t-letter-a {
-            font-size: 1.2rem; /* قەبارەی پیتی A */
-            /* 80% Blue, 20% Yellow */
-            background: linear-gradient(90deg, var(--blue) 80%, var(--yellow) 80%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-right: 0;
-            margin-bottom: -3px; /* کەمێک نزیکتر لە وشەی Center */
-            filter: drop-shadow(0 0 5px rgba(0, 0, 254, 0.5));
+            font-size: 1.2rem; background: linear-gradient(90deg, var(--blue) 80%, var(--yellow) 80%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: -3px; filter: drop-shadow(0 0 5px rgba(0, 0, 254, 0.5));
         }
-
-        .t-word-center {
-            font-size: 0.7rem; /* قەبارەی Center */
-            color: var(--yellow);
-            text-shadow: 0 0 5px rgba(254, 255, 0, 0.5);
-            letter-spacing: 0.5px;
-        }
-
-        .t-highlight { 
-            color: var(--yellow); 
-            font-weight: 800; 
-            text-shadow: 0 0 10px rgba(254, 255, 0, 0.4);
-        }
-        
+        .t-word-center { font-size: 0.7rem; color: var(--yellow); text-shadow: 0 0 5px rgba(254, 255, 0, 0.5); letter-spacing: 0.5px; }
+        .t-highlight { color: var(--yellow); font-weight: 800; text-shadow: 0 0 10px rgba(254, 255, 0, 0.4); }
         .t-phone {
-            font-family: 'Montserrat', sans-serif;
-            background: rgba(255,255,255,0.1);
-            padding: 2px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #00e5ff;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-family: 'Montserrat', sans-serif; background: rgba(255,255,255,0.1); padding: 2px 8px;
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); color: #00e5ff; font-weight: 700; letter-spacing: 1px;
         }
-
         .sep { color: #555; margin: 0 10px; }
-
         @keyframes ticker { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         /* --- Categories Grid --- */
-        .grid-menu {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px; margin-bottom: 30px;
-        }
+        .grid-menu { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px; margin-bottom: 30px; }
         .grid-item {
             background: var(--glass); border: 1px solid var(--border); padding: 20px;
             border-radius: 20px; text-align: center; transition: 0.3s; cursor: pointer;
@@ -447,38 +349,16 @@
         .section-title::before { content: ''; width: 4px; height: 20px; background: var(--blue); border-radius: 2px; }
 
         .shop-gallery {
-            display: flex; 
-            overflow-x: auto; 
-            gap: 15px; 
-            padding: 0 20px 30px 20px; 
-            scrollbar-width: none;
-            scroll-behavior: smooth;
+            display: flex; overflow-x: auto; gap: 15px; padding: 0 20px 30px 20px;
+            scrollbar-width: none; scroll-behavior: smooth;
         }
-        
         .shop-card {
-            min-width: 240px; /* Width for mobile view */
-            height: 320px;    /* 960x1280 Aspect Ratio (3:4) scaled down */
-            background: #121214; 
-            border-radius: 18px; 
-            overflow: hidden;
-            border: 2px solid var(--border);
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            transition: transform 0.3s;
-            cursor: pointer;
+            min-width: 240px; height: 320px; background: #121214; border-radius: 18px; overflow: hidden;
+            border: 2px solid var(--border); position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.3s; cursor: pointer;
         }
-        
-        .shop-card:active {
-            transform: scale(0.98);
-        }
-
-        .shop-img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            filter: brightness(0.9);
-            pointer-events: none; /* Let the card handle click */
-        }
+        .shop-card:active { transform: scale(0.98); }
+        .shop-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); pointer-events: none; }
 
         /* --- Reviews --- */
         .reviews-container {
@@ -497,83 +377,39 @@
         .r-name { margin-top: 10px; color: var(--blue); font-size: 0.8rem; font-weight: bold; }
 
         /* --- ANIMATED SOCIAL GRID --- */
-        .social-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
-            padding: 0 20px 30px 20px;
-        }
-
+        .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 0 20px 30px 20px; }
         .social-btn {
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid var(--border);
-            border-radius: 20px; 
-            height: 85px; 
-            display: flex; justify-content: center; align-items: center;
-            font-size: 2.5rem; 
-            cursor: pointer; 
-            position: relative; 
-            overflow: hidden;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 1;
-            animation: floatBtn 3s ease-in-out infinite;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; height: 85px; 
+            display: flex; justify-content: center; align-items: center; font-size: 2.5rem; cursor: pointer; 
+            position: relative; overflow: hidden; backdrop-filter: blur(5px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1; animation: floatBtn 3s ease-in-out infinite;
         }
 
-        @keyframes floatBtn {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); box-shadow: 0 15px 25px rgba(0,0,0,0.4); }
-        }
+        @keyframes floatBtn { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); box-shadow: 0 15px 25px rgba(0,0,0,0.4); } }
 
         .social-btn::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -150%;
-            width: 100%; height: 100%;
+            content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-            transform: skewX(-25deg);
-            animation: shineBtn 4s infinite;
-            z-index: 2;
-            pointer-events: none;
+            transform: skewX(-25deg); animation: shineBtn 4s infinite; z-index: 2; pointer-events: none;
         }
+        @keyframes shineBtn { 0% { left: -150%; } 20% { left: 150%; } 100% { left: 150%; } }
 
-        @keyframes shineBtn {
-            0% { left: -150%; }
-            20% { left: 150%; } 
-            100% { left: 150%; } 
-        }
-
-        .social-btn:nth-child(1) { animation-delay: 0s; }
-        .social-btn:nth-child(1)::after { animation-delay: 0s; }
-
-        .social-btn:nth-child(2) { animation-delay: 0.2s; }
-        .social-btn:nth-child(2)::after { animation-delay: 1.5s; }
-
-        .social-btn:nth-child(3) { animation-delay: 0.4s; }
-        .social-btn:nth-child(3)::after { animation-delay: 0.5s; }
-        
-        .social-btn:nth-child(4) { animation-delay: 0.1s; }
-        .social-btn:nth-child(4)::after { animation-delay: 2s; }
-
-        .social-btn:nth-child(5) { animation-delay: 0.3s; }
-        .social-btn:nth-child(5)::after { animation-delay: 1s; }
-
-        .social-btn:nth-child(6) { animation-delay: 0.5s; }
-        .social-btn:nth-child(6)::after { animation-delay: 2.5s; }
+        .social-btn:nth-child(1) { animation-delay: 0s; } .social-btn:nth-child(1)::after { animation-delay: 0s; }
+        .social-btn:nth-child(2) { animation-delay: 0.2s; } .social-btn:nth-child(2)::after { animation-delay: 1.5s; }
+        .social-btn:nth-child(3) { animation-delay: 0.4s; } .social-btn:nth-child(3)::after { animation-delay: 0.5s; }
+        .social-btn:nth-child(4) { animation-delay: 0.1s; } .social-btn:nth-child(4)::after { animation-delay: 2s; }
+        .social-btn:nth-child(5) { animation-delay: 0.3s; } .social-btn:nth-child(5)::after { animation-delay: 1s; }
+        .social-btn:nth-child(6) { animation-delay: 0.5s; } .social-btn:nth-child(6)::after { animation-delay: 2.5s; }
 
         .social-btn:active { transform: scale(0.9) !important; }
         
-        /* Brand Colors */
         .s-snap { color: #FFFC00; text-shadow: 0 0 20px rgba(255, 252, 0, 0.6); border-color: rgba(255, 252, 0, 0.2); }
         .s-wa { color: #25D366; text-shadow: 0 0 20px rgba(37, 211, 102, 0.6); border-color: rgba(37, 211, 102, 0.2); }
         .s-viber { color: #7360f2; text-shadow: 0 0 20px rgba(115, 96, 242, 0.6); border-color: rgba(115, 96, 242, 0.2); }
-        .s-insta { 
-            background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            text-shadow: 0 0 10px rgba(220, 39, 67, 0.3);
-        }
+        .s-insta { background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(220, 39, 67, 0.3); }
         .s-fb { color: #1877F2; text-shadow: 0 0 20px rgba(24, 119, 242, 0.6); border-color: rgba(24, 119, 242, 0.2); }
         .s-tiktok { color: #ff0050; text-shadow: 2px 2px 0px #00f2ea; border-color: rgba(255, 255, 255, 0.2); }
-
 
         /* --- Floating Action Bar --- */
         .fab-container {
@@ -590,192 +426,69 @@
         .spin-music { animation: spin 2s linear infinite; color: var(--yellow) !important; text-shadow: 0 0 10px var(--yellow); }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Canvas */
-        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        canvas.confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
         
         /* Modal General */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(5px); }
         .modal.open { opacity: 1; pointer-events: all; }
-        .modal-content { background: #1a1a1a; width: 85%; padding: 25px; border-radius: 20px; border: 1px solid var(--blue); text-align: center; transform: scale(0.8); transition: 0.3s; position: relative; 
-            max-height: 85vh; 
-            overflow-y: auto; 
-        }
+        .modal-content { background: #1a1a1a; width: 85%; padding: 25px; border-radius: 20px; border: 1px solid var(--blue); text-align: center; transform: scale(0.8); transition: 0.3s; position: relative; max-height: 85vh; overflow-y: auto; }
         .modal.open .modal-content { transform: scale(1); }
         .close-modal { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 1.5rem; cursor: pointer; z-index: 10; }
 
         /* --- INSTALL PROMPT MODAL --- */
         .install-icon-wrapper {
-            width: 80px; height: 80px; margin: 0 auto 15px; 
-            background: #000; border-radius: 20px; 
-            display: flex; align-items: center; justify-content: center;
-            border: 2px solid var(--yellow);
-            box-shadow: 0 0 20px rgba(254, 255, 0, 0.2);
+            width: 80px; height: 80px; margin: 0 auto 15px; background: #000; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; border: 2px solid var(--yellow); box-shadow: 0 0 20px rgba(254, 255, 0, 0.2);
         }
         .install-btn {
             background: linear-gradient(90deg, var(--blue), #0000aa);
-            color: #fff; border: none; padding: 12px 30px; 
-            border-radius: 50px; font-size: 1rem; font-weight: bold; 
-            margin-top: 15px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,254, 0.4);
+            color: #fff; border: none; padding: 12px 30px; border-radius: 50px; font-size: 1rem; font-weight: bold; 
+            margin-top: 15px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,254, 0.4);
         }
-        .ios-instruction {
-            margin-top: 15px; font-size: 0.9rem; color: #ccc;
-            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;
-        }
+        .ios-instruction { margin-top: 15px; font-size: 0.9rem; color: #ccc; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
 
-        /* --- LIGHTBOX MODAL (New for Gallery) --- */
-        .lightbox-content {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .lightbox-img {
-            max-width: 95%;
-            max-height: 80vh;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-            border: 2px solid var(--yellow);
-        }
-        .lightbox-close {
-            position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2005;
-        }
+        /* --- LIGHTBOX MODAL --- */
+        .lightbox-content { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .lightbox-img { max-width: 95%; max-height: 80vh; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.8); border: 2px solid var(--yellow); }
+        .lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2005; }
 
-        .barcode-img { width: 200px; height: 200px; margin: 20px auto; display: block; border: 4px solid #fff; border-radius: 10px; }
-
-        /* --- QR GRID SYSTEM (UPDATED WITH BRAND COLORS) --- */
-        .qr-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
+        /* --- QR GRID SYSTEM --- */
+        .qr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
         .qr-card {
-            background: rgba(255,255,255,0.05);
-            padding: 15px 10px;
-            border-radius: 18px;
-            border: 2px solid var(--border); /* Base border */
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            background: rgba(255,255,255,0.05); padding: 15px 10px; border-radius: 18px; border: 2px solid var(--border);
+            text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden;
         }
-        
         .qr-card:active { transform: scale(0.96); }
+        .qr-img { width: 100%; border-radius: 10px; border: 2px solid rgba(255,255,255,0.2); margin-bottom: 10px; background: #fff; padding: 5px; }
+        .qr-name { font-size: 1rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; }
 
-        .qr-img {
-            width: 100%;
-            border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.2);
-            margin-bottom: 10px;
-            background: #fff;
-            padding: 5px;
-        }
-        
-        .qr-name {
-            font-size: 1rem;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
+        .qr-snap { border-color: #FFFC00; box-shadow: 0 0 15px rgba(255, 252, 0, 0.3); }
+        .qr-wa { border-color: #25D366; box-shadow: 0 0 15px rgba(37, 211, 102, 0.3); }
+        .qr-viber { border-color: #7360f2; box-shadow: 0 0 15px rgba(115, 96, 242, 0.3); }
+        .qr-insta { border-color: #E1306C; box-shadow: 0 0 15px rgba(225, 48, 108, 0.3); }
+        .qr-fb { border-color: #1877F2; box-shadow: 0 0 15px rgba(24, 119, 242, 0.3); }
+        .qr-tiktok { border-color: #ff0050; box-shadow: 0 0 15px rgba(255, 0, 80, 0.3); }
 
-        /* --- SPECIFIC BRAND STYLES (BORDER & GLOW) --- */
-        
-        /* Snapchat (Yellow) */
-        .qr-snap {
-            border-color: #FFFC00;
-            box-shadow: 0 0 15px rgba(255, 252, 0, 0.3);
-        }
-        
-        /* WhatsApp (Green) */
-        .qr-wa {
-            border-color: #25D366;
-            box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
-        }
-
-        /* Viber (Purple) */
-        .qr-viber {
-            border-color: #7360f2;
-            box-shadow: 0 0 15px rgba(115, 96, 242, 0.3);
-        }
-
-        /* Instagram (Pink) */
-        .qr-insta {
-            border-color: #E1306C;
-            box-shadow: 0 0 15px rgba(225, 48, 108, 0.3);
-        }
-
-        /* Facebook (Blue) */
-        .qr-fb {
-            border-color: #1877F2;
-            box-shadow: 0 0 15px rgba(24, 119, 242, 0.3);
-        }
-
-        /* TikTok (Red/Cyan - using main Pink) */
-        .qr-tiktok {
-            border-color: #ff0050;
-            box-shadow: 0 0 15px rgba(255, 0, 80, 0.3);
-        }
-
-
-        /* --- NEW CALL MODAL BUTTONS --- */
+        /* --- CALL BUTTONS --- */
         .sim-btn {
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            width: 100%; padding: 16px; margin: 12px 0;
-            border-radius: 15px; text-decoration: none; color: white;
-            font-weight: 800; font-size: 1.2rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px; margin: 12px 0;
+            border-radius: 15px; text-decoration: none; color: white; font-weight: 800; font-size: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
         }
         .sim-btn i { font-size: 1.4rem; }
         .sim-btn:active { transform: scale(0.96); }
+        .asia-btn { background: linear-gradient(135deg, #8E2DE2, #4A00E0); box-shadow: 0 4px 15px rgba(142, 45, 226, 0.4); border: 1px solid rgba(255,255,255,0.2); }
+        .korek-btn { background: linear-gradient(135deg, #00B4DB, #0083B0); box-shadow: 0 4px 15px rgba(0, 180, 219, 0.4); border: 1px solid rgba(255,255,255,0.2); }
 
-        /* Asia Style (Purple) */
-        .asia-btn { 
-            background: linear-gradient(135deg, #8E2DE2, #4A00E0); 
-            box-shadow: 0 4px 15px rgba(142, 45, 226, 0.4);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        /* Korek Style (Blue) */
-        .korek-btn { 
-            background: linear-gradient(135deg, #00B4DB, #0083B0); 
-            box-shadow: 0 4px 15px rgba(0, 180, 219, 0.4);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-
-        /* --- CUSTOM TOAST NOTIFICATION (Updated) --- */
+        /* --- CUSTOM TOAST --- */
         .toast {
-            position: fixed;
-            bottom: 100px; /* Above FAB */
-            left: 50%;
-            transform: translateX(-50%) translateY(30px);
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 255, 0, 0.5);
-            color: #fff;
-            padding: 15px 30px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4); /* Glow Effect */
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 99999;
-            white-space: nowrap;
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(30px);
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(0, 255, 0, 0.5);
+            color: #fff; padding: 15px 30px; border-radius: 50px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4); opacity: 0; pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 99999; white-space: nowrap;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast i { color: #00ff00; font-size: 1.4rem; }
         .toast span { font-size: 1rem; font-weight: 900; letter-spacing: 0.5px; }
 
@@ -783,7 +496,16 @@
 </head>
 <body>
 
-    <canvas id="confetti"></canvas>
+    <div class="bg-animation">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <canvas id="confetti" class="confetti-canvas"></canvas>
     <audio id="bgMusic" loop><source src="ivan.mp3" type="audio/mpeg"></audio>
 
     <div id="customToast" class="toast">
@@ -827,7 +549,7 @@
         </div>
     </div>
 
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
         
         <header class="header">
             <div class="status-badge">
@@ -885,10 +607,18 @@
             <div id="logoNameOverlay" class="logo-name-text"></div>
 
             <div class="hero-circle-logo" id="logoSlideshow" onclick="toggleMusic(true)">
+                <canvas id="circuitCanvas" class="circuit-canvas"></canvas>
+
                 <img src="1.jpg" class="logo-slide-img active" alt="Slide 1">
                 <img src="2.jpg" class="logo-slide-img" alt="Slide 2">
                 <img src="3.jpg" class="logo-slide-img" alt="Slide 3">
                 <img src="4.jpg" class="logo-slide-img" alt="Slide 4">
+                
+                <div class="tech-ring-container">
+                    <div class="tech-ring-1"></div>
+                    <div class="tech-ring-2"></div>
+                    <div class="tech-ring-3"></div>
+                </div>
             </div>
 
             <div id="dynamicGreeting" class="greeting-msg"></div>
@@ -902,6 +632,22 @@
                 </div>
                 دەست دەکەوێت
             </h1>
+
+            <div class="stats-container" id="statsSection">
+                <div class="stat-box">
+                    <span class="stat-num"><span class="stat-plus">+</span><span data-target="5000">0</span></span>
+                    <div class="stat-label">کڕیار</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-num"><span class="stat-plus">+</span><span data-target="1200">0</span></span>
+                    <div class="stat-label">چاککردنەوە</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-num" style="color:var(--yellow)"><span data-target="100">0</span>%</span>
+                    <div class="stat-label">گرەنتی</div>
+                </div>
+            </div>
+
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">هەموو جۆرە مۆبایلێک بە گرەنتی و نرخی گونجاو</p>
         </section>
 
@@ -1064,64 +810,7 @@
     </div>
 
     <script>
-        // --- SHAKE TO CALL FEATURE (Added as requested) ---
-        let lastShakeTime = 0;
-        // Updated Threshold: Lowered to 15 (was 25) to make it easier to trigger
-        const shakeThreshold = 15; 
-
-        window.addEventListener('devicemotion', (event) => {
-            const acc = event.accelerationIncludingGravity;
-            if(!acc) return;
-
-            // Calculate magnitude of acceleration vector
-            const totalAcc = Math.sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
-            
-            // Remove gravity effect (approx 9.8) to get net movement force
-            const netAcc = Math.abs(totalAcc - 9.8);
-
-            if (netAcc > shakeThreshold) {
-                const now = Date.now();
-                // 3 Second cooldown to prevent multiple triggers
-                if (now - lastShakeTime > 3000) {
-                    lastShakeTime = now;
-                    triggerShakeAction();
-                }
-            }
-        });
-
-        function triggerShakeAction() {
-            // 1. Haptic Feedback (Vibrate)
-            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-
-            // 2. Visual Feedback (Reuse Toast)
-            const toast = document.getElementById('customToast');
-            const icon = toast.querySelector('i');
-            const text = toast.querySelector('span');
-            
-            // Temporary change toast content
-            const originalIconClass = icon.className;
-            const originalText = text.innerText;
-
-            icon.className = "fas fa-phone-volume";
-            text.innerText = "پەیوەندی دەکرێت...";
-            toast.classList.add('show');
-            
-            // 3. Initiate Call IMMEDIATELY (No delay)
-            // Using window.location.href or assign immediately helps bypass some browser blocks
-            window.location.href = "tel:07507597461";
-
-            // Reset Toast after call initiates
-            setTimeout(() => {
-                toast.classList.remove('show');
-                // Restore original toast state (for copy link)
-                setTimeout(() => {
-                        icon.className = originalIconClass;
-                        text.innerText = originalText;
-                }, 500);
-            }, 3000);
-        }
-
-        // --- SERVICE WORKER REGISTRATION (PWA) ---
+        // --- 1. PWA SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -1129,57 +818,8 @@
                     .catch(err => console.log('SW Failed', err));
             });
         }
-
-        // --- INSTALL PROMPT LOGIC ---
-        let deferredPrompt;
-        const installModal = document.getElementById('installModal');
-        const androidBtn = document.getElementById('androidInstallBtn');
-        const iosMsg = document.getElementById('iosInstallMsg');
-
-        // Check if already in standalone mode (installed)
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-        if (!isStandalone) {
-            // Android Prompt
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                // Show modal automatically after 5 seconds
-                setTimeout(() => {
-                    installModal.classList.add('open');
-                    androidBtn.style.display = 'block';
-                    iosMsg.style.display = 'none';
-                }, 5000);
-            });
-
-            // iOS Check
-            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
-            if (isIos) {
-                 setTimeout(() => {
-                    installModal.classList.add('open');
-                    androidBtn.style.display = 'none';
-                    iosMsg.style.display = 'block';
-                }, 5000);
-            }
-        }
-
-        function closeInstallModal() {
-            installModal.classList.remove('open');
-        }
-
-        async function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    deferredPrompt = null;
-                }
-                closeInstallModal();
-            }
-        }
-
-
-        // --- HELPER: Get Hour in Sulaymaniyah (Baghdad Time Zone) ---
+        
+        // --- HELPER: Get Hour in Sulaymaniyah ---
         function getSulaymaniyahHour() {
             const now = new Date();
             const options = { timeZone: "Asia/Baghdad", hour: 'numeric', hour12: false };
@@ -1187,13 +827,12 @@
             return parseInt(formatter.format(now));
         }
 
-        // --- 1. PRELOADER & INIT ---
+        // --- 2. PRELOADER & INIT ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('preloader').classList.add('hide-preloader');
                 fireConfetti(); 
                 
-                // --- TICKER LOGIC (DELAYED APPEARANCE) ---
                 setTimeout(() => {
                     const ticker = document.querySelector('.ticker');
                     ticker.classList.add('show-ticker'); 
@@ -1204,9 +843,154 @@
             
             checkStatus();
             setDynamicGreeting();
+            initCircuitAnimation(); // Start the Digital Circuit
         });
 
-        // --- NEW LIGHTBOX FUNCTIONS ---
+        // --- FEATURE: OPTIMIZED TOUCH RIPPLE (SMALLER & FASTER) ---
+        let rippleColor = 'blue';
+        const appContainer = document.getElementById('appContainer');
+
+        appContainer.addEventListener('click', function(e) {
+            
+            // Check if click target is a critical element (like modal or FAB)
+            if (e.target.closest('.modal, .fab-container, .header, .grid-item, .shop-card, .social-btn')) {
+                return; 
+            }
+
+            const circle = document.createElement('div');
+            circle.classList.add('ripple-effect');
+            
+            // Set Color and toggle for next click
+            if(rippleColor === 'blue') {
+                circle.classList.add('ripple-blue');
+                rippleColor = 'yellow';
+            } else {
+                circle.classList.add('ripple-yellow');
+                rippleColor = 'blue';
+            }
+
+            // Position relative to the app-container for absolute positioning
+            const rect = appContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top + appContainer.scrollTop; 
+            
+            circle.style.left = x + 'px';
+            circle.style.top = y + 'px';
+            circle.style.width = '10px'; 
+            circle.style.height = '10px';
+            circle.style.margin = '-5px 0 0 -5px'; // Center it
+
+            appContainer.appendChild(circle);
+
+            // Remove after animation (Faster Cleanup)
+            setTimeout(() => {
+                circle.remove();
+            }, 400); // 0.4s matches CSS animation
+        });
+
+        // --- FEATURE: OPTIMIZED DIGITAL CIRCUIT ANIMATION (Behind Logo) ---
+        function initCircuitAnimation() {
+            const canvas = document.getElementById('circuitCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = 145; 
+            const height = 145;
+            canvas.width = width;
+            canvas.height = height;
+
+            const particles = [];
+            // Reduced particle count for better performance on mobile
+            const particleCount = 25; 
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.8, // Slowed down slightly
+                    vy: (Math.random() - 0.5) * 0.8,
+                    size: Math.random() * 1.5 + 1 // Smaller dots
+                });
+            }
+
+            function animateCircuit() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw Connections
+                ctx.lineWidth = 0.6; // Thinner lines
+                for (let i = 0; i < particleCount; i++) {
+                    for (let j = i + 1; j < particleCount; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 45) { // Connection distance
+                            ctx.beginPath();
+                            // Opacity based on distance
+                            ctx.strokeStyle = `rgba(0, 200, 255, ${0.4 - distance / 100})`; 
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Draw Particles
+                for (let i = 0; i < particleCount; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // Bounce off walls
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    // Alternating colors: Blue and Yellow dots
+                    ctx.fillStyle = i % 2 === 0 ? '#FEFF00' : '#00e5ff'; 
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(animateCircuit);
+            }
+            animateCircuit();
+        }
+
+        // --- FEATURE: LIVE STATS COUNTER ---
+        function animateStats() {
+            const counters = document.querySelectorAll('.stat-num span[data-target]');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const speed = 200; 
+                const inc = target / speed;
+                
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // Trigger Stats Animation on Scroll
+        const statsSection = document.getElementById('statsSection');
+        let statsPlayed = false;
+        
+        const statsObserver = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting && !statsPlayed) {
+                animateStats();
+                statsPlayed = true;
+            }
+        }, { threshold: 0.5 });
+        
+        if(statsSection) statsObserver.observe(statsSection);
+
+
+        // --- LIGHTBOX FUNCTIONS ---
         function openLightbox(src) {
             const modal = document.getElementById('lightboxModal');
             const img = document.getElementById('lightboxImage');
@@ -1220,7 +1004,7 @@
             modal.classList.remove('open');
         }
 
-        // --- 2. STATUS CHECKER ---
+        // --- STATUS CHECKER ---
         function checkStatus() {
             const hour = getSulaymaniyahHour();
             const dot = document.getElementById('statusDot');
@@ -1240,7 +1024,7 @@
         }
         setInterval(checkStatus, 60000);
 
-        // --- 3. DYNAMIC GREETING ---
+        // --- DYNAMIC GREETING ---
         function setDynamicGreeting() {
             const hour = getSulaymaniyahHour();
             const greetingEl = document.getElementById('dynamicGreeting');
@@ -1258,7 +1042,7 @@
             greetingEl.innerText = message;
         }
 
-        // --- 4. REVIEWS SLIDESHOW ---
+        // --- REVIEWS SLIDESHOW ---
         const slides = document.querySelectorAll('.review-slide');
         let currentReview = 0;
         function nextReview() {
@@ -1274,7 +1058,7 @@
         }, { threshold: 0.5 });
         observer.observe(document.getElementById('reviewsBox'));
 
-        // --- 5. LOGO SLIDESHOW & NAMES ---
+        // --- LOGO SLIDESHOW & NAMES ---
         const logoImages = document.querySelectorAll('.logo-slide-img');
         const nameOverlay = document.getElementById('logoNameOverlay');
         let currentLogoIndex = 0;
@@ -1308,7 +1092,7 @@
         }
         setTimeout(changeLogo, 4000);
 
-        // --- 6. INTERACTIONS (UPDATED: NO WARNINGS) ---
+        // --- INTERACTIONS (Music) ---
         const music = document.getElementById('bgMusic');
         const musicIcon = document.getElementById('musicIcon');
         const heroLogo = document.getElementById('logoSlideshow');
@@ -1327,7 +1111,6 @@
             }
         }
 
-        // گۆڕانکاری: لابردنی مەرجی isMusicAllowed و لابردنی showToastMsg
         function toggleMusic(isFromLogo) {
             
             if (music.paused) {
@@ -1365,7 +1148,7 @@
             document.getElementById('callModal').classList.remove('open');
         }
         
-        // --- SHARE LINK (UPDATED: NO TOAST) ---
+        // --- SHARE LINK ---
         function shareLink() {
             if (navigator.share) {
                 navigator.share({
@@ -1382,25 +1165,18 @@
                 textArea.focus();
                 textArea.select();
                 try {
-                    // گۆڕانکاری: لابردنی کۆدی نیشاندانی Toast لێرە
                     document.execCommand('copy');
-                    
-                    // Show standard copy toast
-                    const toast = document.getElementById('customToast');
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 3000);
-
                 } catch (err) { console.error('Copy failed', err); }
                 document.body.removeChild(textArea);
             }
             fireConfetti();
         }
 
-        // --- 7. CONFETTI EFFECT ---
-        const canvas = document.getElementById("confetti");
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // --- CONFETTI EFFECT ---
+        const confettiCanvas = document.getElementById("confetti");
+        const confettiCtx = confettiCanvas.getContext("2d");
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
 
         let particles = [];
         function fireConfetti() {
@@ -1416,16 +1192,53 @@
         }
 
         function animateConfetti() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
+            confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
             particles.forEach((p,i) => {
                 p.x += p.vx; p.y += p.vy; p.life--;
-                ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 5, 5);
+                confettiCtx.fillStyle = p.color; confettiCtx.fillRect(p.x, p.y, 5, 5);
                 if(p.life <= 0) particles.splice(i,1);
             });
             if(particles.length > 0) requestAnimationFrame(animateConfetti);
         }
 
-        // --- 8. SECURITY ---
+        // --- PWA INSTALL ---
+        let deferredPrompt;
+        const installModal = document.getElementById('installModal');
+        const androidBtn = document.getElementById('androidInstallBtn');
+        const iosMsg = document.getElementById('iosInstallMsg');
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        if (!isStandalone) {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                setTimeout(() => {
+                    installModal.classList.add('open');
+                    androidBtn.style.display = 'block';
+                    iosMsg.style.display = 'none';
+                }, 5000);
+            });
+
+            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+            if (isIos) {
+                 setTimeout(() => {
+                    installModal.classList.add('open');
+                    androidBtn.style.display = 'none';
+                    iosMsg.style.display = 'block';
+                }, 5000);
+            }
+        }
+        function closeInstallModal() { installModal.classList.remove('open'); }
+        async function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') { deferredPrompt = null; }
+                closeInstallModal();
+            }
+        }
+
+        // --- SECURITY ---
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
             if(e.keyCode == 123) { return false; }
